@@ -1,32 +1,14 @@
-const express = require('express');
 const inquirer = require('inquirer');
-const mysql = require('mysql2');
 const consoleTable = require('console.table');
-require('dotenv').config();
-
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Use middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
-// Connect to database
-const db = mysql.createConnection(
-    {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-    },
-    console.log('Connected to the employees_db database.')
-);
+const db = require('./db/connection');
+const {
+    deptChoices
+} = require('./questions');
 
 const questArr = [];
 
-function whatToDo() {
+async function whatToDo() {
     displayHeader();
-
     inquirer
         .prompt([
             {
@@ -76,12 +58,7 @@ function whatToDo() {
                 message: 'Under which department is this new employee?',
                 name: 'addEmployeeDepartment',
                 type: 'list',
-                choices: [
-                    db.query('SELECT * FROM department', function (err, results) {
-                        console.log(results);
-                        console.log(err);
-                    })
-                ],
+                choices: await deptChoices(),
                 when: (answers) => answers.selection === 'Add an employee',
             },
         ])
@@ -99,21 +76,22 @@ function whatToDo() {
             } else if (answers.selection === 'Add a role') {
                 // Add a function for adding a role
                 return addRole(answers);
-            } 
-            /* else if (answers.selection === 'Add an employee') {
-
-            } else if (answers.selection === 'Update an employee role') {
+            } else if (answers.selection === 'Add an employee') {
+                // Add a function to add a new employee
+                
+            } /* else if (answers.selection === 'Update an employee role') {
 
             } else {
 
             }*/
         });
 }
+// ===========================================================================
 
 // View All Departments function
 function viewAllDepts() {
     db.query('SELECT * FROM department;\n', function (err, results) {
-        console.table(results);
+        consoleTable(results);
         console.log(err);
     });
 }
@@ -121,7 +99,7 @@ function viewAllDepts() {
 // View All Employees function
 function viewAllEmployees() {
     db.query('SELECT * FROM employee;\n', function (err, results) {
-        console.table(results);
+        consoleTable(results);
         console.log(err);
     });
 }
@@ -129,7 +107,7 @@ function viewAllEmployees() {
 // View All Roles function
 function viewAllRoles() {
     db.query('SELECT * FROM role;\n', function (err, results) {
-        console.table(results);
+        consoleTable(results);
         console.log(err);
     });
 }
@@ -137,7 +115,7 @@ function viewAllRoles() {
 // Add Department function
 function addDept(answers) {
     db.query('INSERT INTO department (name) VALUES(?);\n', [answers.addDepartment], function (err, results) {     
-        console.table(results);
+        consoleTable(results);
         viewAllDepts();
         console.log('Department successfully added!\n');
         console.log(err);
@@ -148,7 +126,7 @@ function addDept(answers) {
 // Add Role function
 function addRole(answers) {
     db.query('INSERT INTO role(title, salary) VALUES(?, ?);\n', [answers.addRole, answers.addSalary], function (err, results) {
-        console.table(results);
+        consoleTable(results);
         viewAllRoles();
         console.log(err);
     });
