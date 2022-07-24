@@ -61,29 +61,37 @@ async function whatToDo() {
                 choices: await deptChoices(),
                 when: (answers) => answers.selection === 'Add an employee',
             },
+            {
+                message: 'Under which department is this new employee?',
+                name: 'addEmployeeDepartment',
+                type: 'list',
+                choices: await deptChoices(),
+                when: (answers) => answers.selection === 'Update an employee role',
+            },
         ])
         .then(answers => {
             console.log(answers.selection);
             if (answers.selection === 'View all departments') {
-                // Add function for displaying table showing all departments
+                // Display table showing all departments
                 return viewAllDepts();
             } else if (answers.selection === 'View all employees') {
-                // Add a function for displaying table showing all employees
+                // Display table showing all employees
                 return viewAllEmployees(); 
             } else if (answers.selection === 'Add a department') {
-                // Add a function for adding a department
+                // Add a department
                 return addDept(answers);
             } else if (answers.selection === 'Add a role') {
-                // Add a function for adding a role
+                // Add a role
                 return addRole(answers);
             } else if (answers.selection === 'Add an employee') {
-                // Add a function to add a new employee
-                
-            } /* else if (answers.selection === 'Update an employee role') {
+                // Add a new employee
+                return addNewEmployee(answers);
+            } else if (answers.selection === 'Update an employee role') {
+                // Update an employee role
+                return updateEmployeeRole(answers);
+            } /* else {
 
-            } else {
-
-            }*/
+            } */
         });
 }
 // ===========================================================================
@@ -91,7 +99,7 @@ async function whatToDo() {
 // View All Departments function
 function viewAllDepts() {
     db.query('SELECT * FROM department;\n', function (err, results) {
-        consoleTable(results);
+        console.table(results);
         console.log(err);
     });
 }
@@ -99,7 +107,7 @@ function viewAllDepts() {
 // View All Employees function
 function viewAllEmployees() {
     db.query('SELECT * FROM employee;\n', function (err, results) {
-        consoleTable(results);
+        console.table(results);
         console.log(err);
     });
 }
@@ -107,7 +115,7 @@ function viewAllEmployees() {
 // View All Roles function
 function viewAllRoles() {
     db.query('SELECT * FROM role;\n', function (err, results) {
-        consoleTable(results);
+        console.table(results);
         console.log(err);
     });
 }
@@ -115,26 +123,34 @@ function viewAllRoles() {
 // Add Department function
 function addDept(answers) {
     db.query('INSERT INTO department (name) VALUES(?);\n', [answers.addDepartment], function (err, results) {     
-        consoleTable(results);
+        console.table(results);
         viewAllDepts();
         console.log('Department successfully added!\n');
         console.log(err);
     });
-    console.log('Hit me!');
 }
 
 // Add Role function
 function addRole(answers) {
     db.query('INSERT INTO role(title, salary) VALUES(?, ?);\n', [answers.addRole, answers.addSalary], function (err, results) {
-        consoleTable(results);
+        console.table(results);
         viewAllRoles();
         console.log(err);
     });
 }
 
+// Add New Employee function
+function addNewEmployee(answers) {
+    db.query('INSERT INTO employee(first_name, last_name) VALUES(?, ?);\n', [answers.addEmployeeFirstName, answers.addEmployeeLastName], function(err, results) {
+        console.table(results);
+        viewAllEmployees();
+        console.log(err);
+    });
+}
 
+function updateEmployeeRole(answers) {
 
-
+}
 
 
 
