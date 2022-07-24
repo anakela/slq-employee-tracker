@@ -41,18 +41,18 @@ function whatToDo() {
         })
         .then(answers => {
             console.log(answers.selection);
-            if (answers.selection = 'View all departments') {
-                viewAllDepts(); // Add function for displaying table showing all departments
-            }
-            // } else if (answers.selection = 'View all employees') {
+            if (answers.selection === 'View all departments') {
+                return viewAllDepts(); // Add function for displaying table showing all departments
+            } else if (answers.selection === 'View all employees') {
+                return viewAllEmployees(); // Add a function for displaying table showing all employees
+            } 
+            // else if (answers.selection === 'Add a department') {
 
-            // } else if (answers.selection = 'Add a department') {
+            // } else if (answers.selection === 'Add a role') {
 
-            // } else if (answers.selection = 'Add a role') {
+            // } else if (answers.selection === 'Add an employee') {
 
-            // } else if (answers.selection = 'Add an employee') {
-
-            // } else if (answers.selection = 'Update an employee role') {
+            // } else if (answers.selection === 'Update an employee role') {
 
             // } else {
 
@@ -62,6 +62,13 @@ function whatToDo() {
 
 function viewAllDepts() {
     db.query('SELECT * FROM department', function (err, results) {
+        console.table(results);
+        console.log(err);
+    });
+}
+
+function viewAllEmployees() {
+    db.query('SELECT * FROM employee', function (err, results) {
         console.table(results);
         console.log(err);
     });
