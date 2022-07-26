@@ -21,4 +21,3 @@ VALUES('Mrs. Peacock'),
     ('Professor Plum'),
     ('Col. Mustard'),
     ('Mrs. White');
-

@@ -55,8 +55,8 @@ async function whatToDo() {
                 when: (answers) => answers.selection === 'Add an employee',
             },
             {
-                message: 'Under which department is this new employee?',
-                name: 'addEmployeeDepartment',
+                message: 'Under which role is this employee?',
+                name: 'addEmployeeRole',
                 type: 'list',
                 choices: await deptChoices(),
                 when: (answers) => answers.selection === 'Add an employee',
@@ -141,6 +141,7 @@ function addRole(answers) {
 
 // Add New Employee function
 function addNewEmployee(answers) {
+    console.log(answers);
     db.query('INSERT INTO employee(first_name, last_name) VALUES(?, ?);\n', [answers.addEmployeeFirstName, answers.addEmployeeLastName], function(err, results) {
         console.table(results);
         viewAllEmployees();
