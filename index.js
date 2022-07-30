@@ -85,7 +85,7 @@ async function whatToDo() {
             },
             {
                 message: `Are you sure you want to exit?`,
-                name: 'exit',
+                name: 'exitProgram',
                 type: 'list',
                 choices: [
                     'Yes',
@@ -117,8 +117,8 @@ async function whatToDo() {
             } else if (answers.selection === 'Update an employee role') {
                 // Update an employee role
                 return updateEmployeeRole(answers);
-            } else {
-                return byeBye();
+            } else /* if (answers.selection === 'Exit the program')*/ {
+                return exitProgram(answers);
             }
         });
 }
@@ -176,7 +176,7 @@ function addDept(answers) {
         console.log(err);
     });
 
-    // whatToDo();
+    whatToDo();
 }
 
 // Add Role function
@@ -202,6 +202,7 @@ function addNewEmployee(answers) {
     whatToDo();
 }
 
+// Update Employee Role function
 function updateEmployeeRole(answers) {
     console.log(answers);
     db.query('UPDATE employee SET role_id = ? WHERE id = ?;\n', [answers.updateEmployeeRole, answers.selectEmployee], function(err, results) {
@@ -213,8 +214,8 @@ function updateEmployeeRole(answers) {
     whatToDo();
 }
 
-function byeBye(answers) {
-    if (answers.exit === 'Yes') {
+function exitProgram(answers) {
+    if (answers.exitProgram === 'Yes') {
         console.log(`\n
  _______                           __                         __ 
 /       \                         /  |                       /  |
@@ -228,7 +229,7 @@ $$$$$$$/  $$$$$$$ |$$$$$$$/       $$$$$$$/  $$$$$$$ |$$$$$$$/$$/
          /  \__$$ |                        /  \__$$ |            
          $$    $$/                         $$    $$/             
           $$$$$$/                           $$$$$$/              `);
-    } else if (answers.exit === 'No') {
+    } else {
         whatToDo();
     }
 }

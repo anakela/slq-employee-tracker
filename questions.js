@@ -14,7 +14,7 @@ const deptChoices = async () => {
 
 const roleChoices = async () => {
     return new Promise(function (resolve, reject) {
-        db.query('SELECT id AS value, title FROM role;', function (err, results) {
+        db.query(`SELECT id AS 'Role ID', title AS 'Job Title' FROM role;`, function (err, results) {
             if (err) {
                 reject(err);
             };
@@ -26,14 +26,13 @@ const roleChoices = async () => {
 
 const employeeChoices = async () => {
     return new Promise(function (resolve, reject) {
-        db.query(`SELECT id AS value, CONCAT(employee.first_name, ' ', employee.last_name) FROM employee;`, function (err, results) {
+        db.query(`SELECT id AS 'Employee ID', CONCAT(employee.first_name, ' ', employee.last_name) AS 'Employee Name' FROM employee;`, function (err, results) {
             if (err) {
                 reject(err);
             };
             resolve(results);
         });
     });
-
 };
 
 (async () => {
