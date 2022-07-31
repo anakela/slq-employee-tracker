@@ -2,8 +2,9 @@ const inquirer = require('inquirer');
 const consoleTable = require('console.table');
 const db = require('./db/connection');
 const {
-    deptChoices, employeeChoices, roleChoices
-} = require('./questions');
+    employeeChoices, 
+    roleChoices,
+} = require('./queries/questions');
 
 const questArr = [];
 
@@ -11,7 +12,7 @@ async function whatToDo() {
     inquirer
         .prompt([
             {
-            message: 'What would you like to do?',
+            message: `What would you like to do?`,
             name: 'selection',
             type: 'list',
             choices: [
@@ -128,7 +129,8 @@ async function whatToDo() {
 function viewAllDepts() {
     db.query(`\n\n
     SELECT department.id AS 'Department ID', department.name AS 'Department Name'
-    FROM department;\n`, function (err, results) {
+    FROM department
+    ORDER BY department.id;\n`, function (err, results) {
         console.table(results);
         console.log(err);
     });
@@ -140,7 +142,8 @@ function viewAllDepts() {
 function viewAllRoles() {
     db.query(`SELECT role.id AS 'Role ID', role.title AS Title, department.name AS Department, CONCAT('$', role.salary) AS Salary
     FROM role
-    LEFT JOIN department ON role.department_id=department.id;;\n`, function(err, results) {
+    LEFT JOIN department ON role.department_id=department.id
+    ORDER BY role.id;\n`, function(err, results) {
         console.table(results);
         console.log(err);
     });
@@ -159,7 +162,8 @@ function viewAllEmployees() {
     FROM employee
         INNER JOIN role ON employee.role_id=role.id 
         INNER JOIN department ON role.department_id=department.id
-        LEFT JOIN employee AS m ON employee.manager_id=m.id;\n`, function (err, results) {
+        LEFT JOIN employee AS m ON employee.manager_id=m.id
+    ORDER BY employee.id;\n`, function (err, results) {
         console.table(results);
         console.log(err);
     });
@@ -175,8 +179,6 @@ function addDept(answers) {
         console.log('Department successfully added!\n');
         console.log(err);
     });
-
-    whatToDo();
 }
 
 // Add Role function
@@ -186,32 +188,26 @@ function addRole(answers) {
         viewAllRoles();
         console.log(err);
     });
-
-    whatToDo();
 }
 
 // Add New Employee function
 function addNewEmployee(answers) {
     console.log(answers);
-    db.query('INSERT INTO employee(first_name, last_name) VALUES(?, ?);\n', [answers.addEmployeeFirstName, answers.addEmployeeLastName], function(err, results) {
+    db.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);\n`, [answers.addEmployeeFirstName, answers.addEmployeeLastName, answers.addEmployeeRole, answers.addEmployeeManager], function(err, results) {
         console.table(results);
         viewAllEmployees();
         console.log(err);
     });
-
-    whatToDo();
 }
 
 // Update Employee Role function
 function updateEmployeeRole(answers) {
     console.log(answers);
-    db.query('UPDATE employee SET role_id = ? WHERE id = ?;\n', [answers.updateEmployeeRole, answers.selectEmployee], function(err, results) {
+    db.query(`UPDATE employee SET role_id = ? WHERE id = ?;\n`, [answers.updateEmployeeRole, answers.selectEmployee], function(err, results) {
         console.table(results);
         viewAllEmployees();
         console.log(err);
     });
-
-    whatToDo();
 }
 
 function exitProgram(answers) {
@@ -236,28 +232,28 @@ $$$$$$$/  $$$$$$$ |$$$$$$$/       $$$$$$$/  $$$$$$$ |$$$$$$$/$$/
 
 function displayHeader() {
     console.log(`\n
-     ________                       __                                     
-    /        |                     /  |                                    
-    $$$$$$$$/ _____  ____   ______ $$ | ______  __    __  ______   ______  
-    $$ |__   /     \/    \ /      \$$ |/      \/  |  /  |/      \ /      \ 
-    $$    |  $$$$$$ $$$$  /$$$$$$  $$ /$$$$$$  $$ |  $$ /$$$$$$  /$$$$$$  |
-    $$$$$/   $$ | $$ | $$ $$ |  $$ $$ $$ |  $$ $$ |  $$ $$    $$ $$    $$ |
-    $$ |_____$$ | $$ | $$ $$ |__$$ $$ $$ \__$$ $$ \__$$ $$$$$$$$/$$$$$$$$/ 
-    $$       $$ | $$ | $$ $$    $$/$$ $$    $$/$$    $$ $$       $$       |
-    $$$$$$$$/$$/  $$/  $$/$$$$$$$/ $$/ $$$$$$/  $$$$$$$ |$$$$$$$/ $$$$$$$/ 
-                          $$ |                 /  \__$$ |                  
-     __       __          $$ |                 $$    $$/                   
-    /  \     /  |         $$/                   $$$$$$/                    
-    $$  \   /$$ | ______  _______   ______   ______   ______   ______      
-    $$$  \ /$$$ |/      \/       \ /      \ /      \ /      \ /      \     
-    $$$$  /$$$$ |$$$$$$  $$$$$$$  |$$$$$$  /$$$$$$  /$$$$$$  /$$$$$$  |    
-    $$ $$ $$/$$ |/    $$ $$ |  $$ |/    $$ $$ |  $$ $$    $$ $$ |  $$/     
-    $$ |$$$/ $$ /$$$$$$$ $$ |  $$ /$$$$$$$ $$ \__$$ $$$$$$$$/$$ |          
-    $$ | $/  $$ $$    $$ $$ |  $$ $$    $$ $$    $$ $$       $$ |          
-    $$/      $$/ $$$$$$$/$$/   $$/ $$$$$$$/ $$$$$$$ |$$$$$$$/$$/           
-                                           /  \__$$ |                      
-                                           $$    $$/                       
-                                            $$$$$$/                        \n`);
+ ________                       __                                     
+/        |                     /  |                                    
+$$$$$$$$/ _____  ____   ______ $$ | ______  __    __  ______   ______  
+$$ |__   /     \/    \ /      \$$ |/      \/  |  /  |/      \ /      \ 
+$$    |  $$$$$$ $$$$  /$$$$$$  $$ /$$$$$$  $$ |  $$ /$$$$$$  /$$$$$$  |
+$$$$$/   $$ | $$ | $$ $$ |  $$ $$ $$ |  $$ $$ |  $$ $$    $$ $$    $$ |
+$$ |_____$$ | $$ | $$ $$ |__$$ $$ $$ \__$$ $$ \__$$ $$$$$$$$/$$$$$$$$/ 
+$$       $$ | $$ | $$ $$    $$/$$ $$    $$/$$    $$ $$       $$       |
+$$$$$$$$/$$/  $$/  $$/$$$$$$$/ $$/ $$$$$$/  $$$$$$$ |$$$$$$$/ $$$$$$$/ 
+                      $$ |                 /  \__$$ |                  
+ ________             $$ |       __        $$    $$/                   
+/        |            $$/       /  |        $$$$$$/                    
+$$$$$$$$______  ______   _______$$ |   __  ______   ______             
+   $$ |/      \/      \ /       $$ |  /  |/      \ /      \            
+   $$ /$$$$$$  $$$$$$  /$$$$$$$/$$ |_/$$//$$$$$$  /$$$$$$  |           
+   $$ $$ |  $$//    $$ $$ |     $$   $$< $$    $$ $$ |  $$/            
+   $$ $$ |    /$$$$$$$ $$ \_____$$$$$$  \$$$$$$$$/$$ |                 
+   $$ $$ |    $$    $$ $$       $$ | $$  $$       $$ |                 
+   $$/$$/      $$$$$$$/ $$$$$$$/$$/   $$/ $$$$$$$/$$/                  
+                                                                       
+                                                                       
+                                                                       \n`);
 }
 
 displayHeader();
