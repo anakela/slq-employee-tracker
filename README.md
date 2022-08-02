@@ -57,6 +57,8 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 ![](./assets/images/employee-manager-screenshot.png)
 
+https://user-images.githubusercontent.com/103882157/182282827-e080268c-e62a-409c-84ea-fd1b1b827a11.mp4
+
 ### Links
 
 - Solution URL: [Add solution URL here](https://your-solution-url.com)
