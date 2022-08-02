@@ -77,7 +77,72 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 ### What I Learned
 
+Once again, a challenge that presented as exactly that!  There were so many moving parts to this particular exercise, but I did learn many things.
 
+One of the first things that I learned was how to connect my SQL database to my node application.  This was done by creating the connection in `connection.js` as follows:
+
+```JavaScript
+const mysql = require('mysql2');
+require('dotenv').config();
+
+// Connect to database
+const db = mysql.createConnection(
+    {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+    },
+);
+
+db.connect((error) => {
+    if (error) {
+        throw error;
+    }
+});
+
+module.exports = db;
+```
+
+I then had to require the `connection.js` file in my `index.js` file:
+
+```JavaScript
+const db = require('./db/connection');
+```
+
+This connection allowed me to pull data from my `employee_db` database.
+
+One of the other things I learned during this challenge was how to pull data using functions that I created in a separate `questions.js` file.  For example, in my `questions.js` file, I created the following function:
+
+```JavaScript
+const db = require('../db/connection');
+
+const roleChoices = async () => {
+    return new Promise(function (resolve, reject) {
+        db.query(`SELECT id AS value, title AS name FROM role;`, function (err, results) {
+            if (err) {
+                reject(err);
+            };
+            resolve(results);
+        });
+    });
+};
+```
+
+I then used this function to pull SQL data for use as choices in my inquirer prompts.
+
+```JavaScript
+{
+    message: 'Under which role is this employee?',
+    name: 'addEmployeeRole',
+    type: 'list',
+    choices: await roleChoices(),
+    when: (answers) => answeselection === 'Add an employee',
+},
+
+```
+
+This was a HUGE help in getting the most updated role, department, and employee data from the SQL database without having to hard code it into inquirer.
 
 ### Continued Development
 
