@@ -61,8 +61,7 @@ https://user-images.githubusercontent.com/103882157/182282827-e080268c-e62a-409c
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+- Solution URL: [https://github.com/anakela/sql-employee-tracker/](https://github.com/anakela/sql-employee-tracker/)
 
 ## My Process
 
